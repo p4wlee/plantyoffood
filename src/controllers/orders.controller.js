@@ -297,7 +297,7 @@ exports.removeProductFromOrder = async (req, res) => {
     }
 
     // verificare se l'associazione tra ordine e prodotto esiste già
-    const [associationRows] = await db.execute(`SELECT * FROM order_prodicts WHERE order_id = ? AND product_id = ?`, [id, product_id]);
+    const [associationRows] = await db.execute(`SELECT * FROM order_products WHERE order_id = ? AND product_id = ?`, [id, product_id]);
 
     // se l'associazione non esiste, rispondere con un errore
     if (associationRows.length === 0) {
@@ -307,13 +307,13 @@ exports.removeProductFromOrder = async (req, res) => {
     }
 
     // query sql per eliminare l'associazione tra ordine e prodotto
-    const sql = `DELETE FROM order_products WHERE order_id = ? AMD product_id = ?`;
+    const sql = `DELETE FROM order_products WHERE order_id = ? AND product_id = ?`;
 
     // eseguire la query
     const [result] = await db.execute(sql, [id, product_id]);
 
     // rispondere con successo
-    res.status(203).send();
+    res.status(204).send();
 
     // gestire gli errori del server
   } catch (error) {

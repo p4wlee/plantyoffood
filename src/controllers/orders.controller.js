@@ -45,6 +45,37 @@ exports.getOrders = async (req, res) => {
   }
 };
 
+// ottenere un ordine per ID
+exports.getOrderById = async (req, res) => {
+  // gestire l'ottenimento di un ordine per ID
+  try {
+    const { orderId } = req.params;
+
+    // query SQL per ottenere un ordine per ID
+    const sql = `SELECT * FROM orders WHERE id = ?`;
+
+    // eseguire la query
+    const [rows] = await db.execute(sql, [orderId]);
+
+    // se l'ordine non esiste, rispondere con un errore
+    if (rows.length === 0) {
+      return res.status(404).json({
+        error: `ordine con ID ${orderId} non trovato`,
+      });
+    }
+
+    // rispondere con l'ordine ottenuto
+    res.status(200).json(rows[0]);
+
+    // gestire gli errori del server
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: `Errore del server`,
+    });
+  }
+};
+
 // eliminare un ordine per ID
 exports.deleteOrder = async (req, res) => {
   // gestire l'eliminazione di un ordine

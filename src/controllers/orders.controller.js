@@ -76,6 +76,43 @@ exports.getOrderById = async (req, res) => {
   }
 };
 
+// ottenere tutti gli utenti associati a un ordine
+exports.getUsersOfOrder = async (req, res) => {
+  // gestire l'ottenimento di tutti gli utenti associati a un ordine
+  try {
+    const { orderId } = req.params;
+
+    // verificare se l'ordine esiste
+    const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [orderId]);
+
+    // se l'ordine non esiste, rispondere con un errore
+    if (orderRows.length === 0) {
+      return res.status(404).json({
+        error: `ordine con ID ${orderId} non trovato`,
+      });
+    }
+
+    // query SQL per ottenere tutti gli utenti associati a un ordine
+    const sql = `SELECT users.id, users.nome, users.cognome, users.email
+                 FROM users
+                 JOIN order_users on users.id = order_users.user_id
+                 WHERE order_users.order_id = ?`;
+
+    // eseguire la query
+    const [rows] = await db.execute(sql, [orderId]);
+
+    // rispondere con gli utenti ottenuti
+    res.status(200).json(rows);
+
+    // gestire gli errori del server
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: `Errore del server`,
+    });
+  }
+};
+
 // eliminare un ordine per ID
 exports.deleteOrder = async (req, res) => {
   // gestire l'eliminazione di un ordine

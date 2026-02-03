@@ -49,18 +49,18 @@ exports.getOrders = async (req, res) => {
 exports.deleteOrder = async (req, res) => {
   // gestire l'eliminazione di un ordine
   try {
-    const { id } = req.params;
+    const { orderId } = req.params;
 
     // query SQL per eliminare un ordine per ID
     const sql = `DELETE FROM orders WHERE id = ?`;
 
     // eseguire la query
-    const [result] = await db.execute(sql, [id]);
+    const [result] = await db.execute(sql, [orderId]);
 
     // se nessuna riga è stata interessata, l'ordine non esiste
     if (result.affectedRows === 0) {
       return res.status(404).json({
-        error: `ordine con ID ${id} non trovato`,
+        error: `ordine con ID ${orderId} non trovato`,
       });
     }
 
@@ -79,42 +79,41 @@ exports.deleteOrder = async (req, res) => {
 // aggiungere un utente a un ordine
 exports.addUserToOrder = async (req, res) => {
   try {
-    // estrarre l'ID dell'ordine dai parametri della richiesta
-    const { id } = req.params; // order ID
-    const { user_id } = req.body;
+    // estrarre l'ID dell'ordine e l'ID del prodotto dai parametri della richiesta
+    const { orderId, userId } = req.params; // order ID
 
     // convalidare l'input
-    if (!user_id) {
+    if (!userId) {
       return res.status(400).json({
         error: `il campo USER_ID è obbligatorio.`,
       });
     }
 
     // verificare se l'ordine esiste
-    const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [id]);
+    const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [orderId]);
     // se l'ordine non esiste, rispondere con un errore
     if (orderRows.length === 0) {
       return res.status(404).json({
-        error: `ordine con ID ${id} non trovato`,
+        error: `ordine con ID ${orderId} non trovato`,
       });
     }
 
     // verificare se l'utente esiste
-    const [userRows] = await db.execute(`SELECT * FROM users WHERE id = ?`, [user_id]);
+    const [userRows] = await db.execute(`SELECT * FROM users WHERE id = ?`, [userId]);
     // se l'utente non esiste, rispondere con un errore
     if (userRows.length === 0) {
       return res.status(404).json({
-        error: `utente con ID ${user_id} non trovato`,
+        error: `utente con ID ${userId} non trovato`,
       });
     }
 
     // verificare se l'associazione tra ordine e utente esiste già
-    const [associationRows] = await db.execute(`SELECT * FROM order_users WHERE order_id = ? AND user_id = ?`, [id, user_id]);
+    const [associationRows] = await db.execute(`SELECT * FROM order_users WHERE order_id = ? AND user_id = ?`, [orderId, userId]);
 
     // se l'associazione esiste già, rispondere con un errore
     if (associationRows.length > 0) {
       return res.status(400).json({
-        error: `l'utente con ID ${user_id} è già associato all'ordine con ID ${id}`,
+        error: `l'utente con ID ${userId} è già associato all'ordine con ID ${orderId}`,
       });
     }
 
@@ -122,13 +121,13 @@ exports.addUserToOrder = async (req, res) => {
     const sql = `INSERT INTO order_users (order_id, user_id) VALUES (?, ?)`;
 
     // eseguire la query
-    const [result] = await db.execute(sql, [id, user_id]);
+    const [result] = await db.execute(sql, [orderId, userId]);
 
     // rispondere con successo
     res.status(201).json({
       id: result.insertId,
-      order_id: id,
-      user_id,
+      order_id: orderId,
+      user_id: userId,
     });
     // gestire gli errori del server
   } catch (error) {
@@ -142,42 +141,41 @@ exports.addUserToOrder = async (req, res) => {
 // rimuovere un utente da un ordine
 exports.removeUserFromOrder = async (req, res) => {
   try {
-    // estrarre l'ID dell'ordine dai parametri della richiesta
-    const { id } = req.params; // order ID
-    const { user_id } = req.body;
+    // estrarre l'ID dell'ordine e l'ID del prodotto dai parametri della richiesta
+    const { orderId, userId } = req.params; // order ID
 
     // convalidare l'input
-    if (!user_id) {
+    if (!userId) {
       return res.status(400).json({
         error: `il campo USER_ID è obbligatorio.`,
       });
     }
 
     // verificare se l'ordine esiste
-    const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [id]);
+    const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [orderId, userId]);
     // se l'ordine non esiste, rispondere con un errore
     if (orderRows.length === 0) {
       return res.status(404).json({
-        error: `ordine con ID ${id} non trovato`,
+        error: `ordine con ID ${orderId} non trovato`,
       });
     }
 
     // verificare se l'utente esiste
-    const [userRows] = await db.execute(`SELECT * FROM users WHERE id = ?`, [user_id]);
+    const [userRows] = await db.execute(`SELECT * FROM users WHERE id = ?`, [userId]);
     // se l'utente non esiste, rispondere con un errore
     if (userRows.length === 0) {
       return res.status(404).json({
-        error: `utente con ID ${user_id} non trovato`,
+        error: `utente con ID ${userId} non trovato`,
       });
     }
 
     // verificare se l'associazione tra ordine e utente esiste già
-    const [associationRows] = await db.execute(`SELECT * FROM order_users WHERE order_id = ? AND user_id = ?`, [id, user_id]);
+    const [associationRows] = await db.execute(`SELECT * FROM order_users WHERE order_id = ? AND user_id = ?`, [orderId, userId]);
 
     // se l'associazione non esiste, rispondere con un errore
     if (associationRows.length === 0) {
       return res.status(404).json({
-        error: `l'utente con ID ${user_id} non è associato all'ordine con ID ${id}`,
+        error: `l'utente con ID ${userId} non è associato all'ordine con ID ${orderId}`,
       });
     }
 
@@ -185,7 +183,7 @@ exports.removeUserFromOrder = async (req, res) => {
     const sql = `DELETE FROM order_users WHERE order_id = ? AND user_id = ?`;
 
     // eseguire la query
-    const [result] = await db.execute(sql, [id, user_id]);
+    const [result] = await db.execute(sql, [orderId, userId]);
 
     // rispondere con successo
     res.status(204).send();
@@ -202,56 +200,55 @@ exports.removeUserFromOrder = async (req, res) => {
 // aggiungere un prodotto a un ordine
 exports.addProductToOrder = async (req, res) => {
   try {
-    // estrarre l'ID dell'ordine dai parametri della richiesta
-    const { id } = req.params;
-    const { product_id } = req.body;
+    // estrarre l'ID dell'ordine e l'ID del prodotto dai parametri della richiesta
+    const { orderId, productId } = req.params;
 
     // convalidare l'input
-    if (!product_id) {
+    if (!productId) {
       return res.status(400).json({
         error: `il campo PRODUCT_ID è obbligatorio.`,
       });
     }
 
     // verificare se l'ordine esiste
-    const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [id]);
+    const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [orderId]);
     // se l'ordine non esiste, rispondere con un errore
     if (orderRows.length === 0) {
       return res.status(404).json({
-        error: `ordine con ID ${id} non trovato`,
+        error: `ordine con ID ${orderId} non trovato`,
       });
     }
 
     // verificare se il prodotto esiste
-    const [productRows] = await db.execute(`SELECT * FROM products WHERE id = ?`, [product_id]);
+    const [productRows] = await db.execute(`SELECT * FROM products WHERE id = ?`, [productId]);
     // se il prodotto non esiste, rispondere con un errore
     if (productRows.length === 0) {
       return res.status(404).json({
-        error: `prodotto con ID ${product_id} non trovato`,
+        error: `prodotto con ID ${productId} non trovato`,
       });
     }
 
     // verifico se l'associazione tra ordine e prodotto esiste già
-    const [associationRows] = await db.execute(`SELECT * FROM order_products WHERE order_id = ? AND product_id = ?`, [id, product_id]);
+    const [associationRows] = await db.execute(`SELECT * FROM order_products WHERE order_id = ? AND product_id = ?`, [orderId, productId]);
 
     // se l'associazione esiste già, rispondere con un errore
     if (associationRows.length > 0) {
       return res.status(400).json({
-        error: `il prodotto con ID ${product_id} è già associato all'ordine con ID ${id}`,
+        error: `il prodotto con ID ${productId} è già associato all'ordine con ID ${orderId}`,
       });
     }
 
     // inserire l'associazione tra ordine e prodotto nella tabella order_products
-    const sql = `INSERT INTO order_products (order_id,product_id) VALUES (?, ?)`;
+    const sql = `INSERT INTO order_products (order_id, product_id) VALUES (?, ?)`;
 
     // eseguire la query
-    const [result] = await db.execute(sql, [id, product_id]);
+    const [result] = await db.execute(sql, [orderId, productId]);
 
     // rispondere con successo
     res.status(201).json({
       id: result.insertId,
-      order_id: id,
-      product_id,
+      order_id: orderId,
+      product_id: productId,
     });
 
     // gestire gli errori del server
@@ -265,44 +262,43 @@ exports.addProductToOrder = async (req, res) => {
 
 exports.removeProductFromOrder = async (req, res) => {
   try {
-    // estrarre l'ID dell'ordine dai parametri della richiesta
-    const { id } = req.params;
-    const { product_id } = req.body;
+    // estrarre l'ID dell'ordine e l'ID del prodotto dai parametri della richiesta
+    const { orderId, productId } = req.params;
 
     // convalidare l'input
-    if (!product_id) {
+    if (!productId) {
       return res.status(400).json({
         error: `il campo PRODUCT_ID è obbligatorio.`,
       });
     }
 
     // verificare se l'ordine esiste
-    const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [id]);
+    const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [orderId]);
 
     // se l'ordine non esiste, rispondere con un errore
     if (orderRows.length === 0) {
       return res.status(404).json({
-        error: `ordine con ID ${id} non trovato`,
+        error: `ordine con ID ${orderId} non trovato`,
       });
     }
 
     // verificare se il prodotto esiste
-    const [productRows] = await db.execute(`SELECT * FROM products WHERE id = ?`, [product_id]);
+    const [productRows] = await db.execute(`SELECT * FROM products WHERE id = ?`, [productId]);
 
     // se il prodotto non esiste, rispondere con un errore
     if (productRows.length === 0) {
       return res.status(404).json({
-        error: `prodotto con ID ${product_id} non trovato`,
+        error: `prodotto con ID ${productId} non trovato`,
       });
     }
 
     // verificare se l'associazione tra ordine e prodotto esiste già
-    const [associationRows] = await db.execute(`SELECT * FROM order_products WHERE order_id = ? AND product_id = ?`, [id, product_id]);
+    const [associationRows] = await db.execute(`SELECT * FROM order_products WHERE order_id = ? AND product_id = ?`, [orderId, productId]);
 
     // se l'associazione non esiste, rispondere con un errore
     if (associationRows.length === 0) {
       return res.status(404).json({
-        error: `il prodotto con ID ${product_id} non è associato all'ordine con ID ${id}`,
+        error: `il prodotto con ID ${productId} non è associato all'ordine con ID ${orderId}`,
       });
     }
 
@@ -310,7 +306,7 @@ exports.removeProductFromOrder = async (req, res) => {
     const sql = `DELETE FROM order_products WHERE order_id = ? AND product_id = ?`;
 
     // eseguire la query
-    const [result] = await db.execute(sql, [id, product_id]);
+    const [result] = await db.execute(sql, [orderId, productId]);
 
     // rispondere con successo
     res.status(204).send();

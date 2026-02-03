@@ -17,6 +17,7 @@ router.get("/:orderId", ordersController.getOrderById);
 router.get("/:orderId/users", ordersController.getUsersOfOrder);
 // rotta per ottenere tutti i prodotti associati a un ordine specifico
 router.get("/:orderId/products", ordersController.getProductsOfOrder);
+// rotta per eliminare un ordine specifico tramite il suo ID
 router.delete("/:orderId", ordersController.deleteOrder);
 
 // rotte per gestire l'associazione tra ordini e utenti

@@ -115,6 +115,7 @@ exports.getUsersOfOrder = async (req, res) => {
 
 // ottenere tutti i prodotti associati a un ordine
 exports.getProductsOfOrder = async (req, res) => {
+  // gestire l'ottenimento di tutti i prodotti associati a un ordine
   try {
     const { orderId } = req.params;
     // verificare se l'ordine esiste

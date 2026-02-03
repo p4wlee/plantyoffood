@@ -6,8 +6,12 @@ const router = express.Router();
 const ordersController = require("../controllers/orders.controller");
 
 // definizione delle rotte degli ordini (CRUD)
+
+// rotte CRUD base
 router.post("/", ordersController.createOrder);
 router.get("/", ordersController.getOrders);
+
+// rotta per ottenere un ordine specifico tramite il suo ID
 router.get("/:orderId", ordersController.getOrderById);
 router.delete("/:orderId", ordersController.deleteOrder);
 

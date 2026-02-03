@@ -4,7 +4,7 @@ const db = require("../db/connection");
 exports.createOrder = async (req, res) => {
   try {
     // query SQL per inserire un nuovo ordine
-    const sql = `INSERT INTO orders (created_at) VALUES (noww())`;
+    const sql = `INSERT INTO orders (created_at) VALUES (now())`;
 
     // eseguire la query
     const [result] = await db.execute(sql);

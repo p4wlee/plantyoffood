@@ -8,6 +8,7 @@ const ordersController = require("../controllers/orders.controller");
 // definizione delle rotte degli ordini (CRUD)
 router.post("/", ordersController.createOrder);
 router.get("/", ordersController.getOrders);
+router.get("/:orderId", ordersController.getOrderById);
 router.delete("/:orderId", ordersController.deleteOrder);
 
 // rotte per gestire l'associazione tra ordini e utenti

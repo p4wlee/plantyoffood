@@ -13,8 +13,8 @@ router.get("/", ordersController.getOrders);
 
 // rotta per ottenere un ordine specifico tramite il suo ID
 router.get("/:orderId", ordersController.getOrderById);
-// rotta per ottenere gli utenti associati a un ordine specifico
-router.get("/:orderId/users", ordersController.getOrderUsers);
+// rotta per ottenere tutti gli utenti associati a un ordine specifico
+router.get("/:orderId/users", ordersController.getUsersOfOrder);
 router.delete("/:orderId", ordersController.deleteOrder);
 
 // rotte per gestire l'associazione tra ordini e utenti

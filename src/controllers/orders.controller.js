@@ -142,7 +142,7 @@ exports.addUserToOrder = async (req, res) => {
 exports.removeUserFromOrder = async (req, res) => {
   try {
     // estrarre l'ID dell'ordine e l'ID del prodotto dai parametri della richiesta
-    const { orderId, userId } = req.params; // order ID
+    const { orderId } = req.params; // order ID
 
     // convalidare l'input
     if (!userId) {

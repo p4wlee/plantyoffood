@@ -8,15 +8,15 @@ const ordersController = require("../controllers/orders.controller");
 // definizione delle rotte degli ordini (CRUD)
 router.post("/", ordersController.createOrder);
 router.get("/", ordersController.getOrders);
-router.delete("/:id", ordersController.deleteOrder);
+router.delete("/:orderId", ordersController.deleteOrder);
 
 // rotte per gestire l'associazione tra ordini e utenti
-router.post("/:id/users", ordersController.addUserToOrder);
-router.delete("/:id/users/userID", ordersController.removeUserFromOrder);
+router.post("/:orderId/users/:userId", ordersController.addUserToOrder);
+router.delete("/:orderId/users/:userId", ordersController.removeUserFromOrder);
 
 // rotte per gestire l'associazione tra ordini e prodotti
-router.post("/:id/products", ordersController.addProductToOrder);
-router.delete("/:id/products/productID", ordersController.removeProductFromOrder);
+router.post("/:orderId/products/:productId", ordersController.addProductToOrder);
+router.delete("/:orderId/products/:productId", ordersController.removeProductFromOrder);
 
 // esportazione del router
 module.exports = router;

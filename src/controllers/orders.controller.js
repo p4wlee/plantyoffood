@@ -27,14 +27,55 @@ exports.createOrder = async (req, res) => {
 // ottenere tutti gli ordini
 exports.getOrders = async (req, res) => {
   try {
-    // query SQL per ottenere tutti gli ordini
-    const sql = ` SELECT * FROM orders ORDER BY created_at DESC`;
+    // req.query sono i parametri di query opzionali (filtri opzionali)
+    const { productId, startDate, endDate } = req.query;
+
+    /* query base per ottenere tutti gli ordini.
+    usiamo DISTINCT perchè un ordine può contenere più prodotti. 
+    usiamo LEFT JOIN perchè se non filtro per prodotto vogliamo comunque tutti gli ordini */
+    let sql = `SELECT DISTINCT orders.* 
+              FROM orders
+              LEFT JOIN order_products ON orders.id = order_products.order_id
+              WHERE 1=1`; // 1=1 serve per aggiungere più condizioni AND in modo semplice
+
+    // array per i parametri della query
+    const params = [];
+
+    // aggiungere filtri opzionali alla query
+    // se è stato fornito un productId, filtrare per quel prodotto
+    if (productId) {
+      sql += ` AND order_products.product_id = ?`;
+      params.push(productId); // aggiungere il productId ai parametri
+    }
+
+    // se sono state fornite date di inizio/fine, filtrare per intervallo di date
+    // filtro per data di creazione dell'ordine
+    if (startDate) {
+      sql += ` AND orders.created_at >= ?`;
+      params.push(startDate); // aggiungere la startDate ai parametri
+    }
+
+    // filtro per data di fine
+    if (endDate) {
+      sql += ` AND orders.created_at <=?`;
+      params.push(endDate); // aggiungere la endDate ai parametri
+    }
+
+    // ordinare i risultati per ID ordine decrescente (ordini più recenti prima)
+    sql += ` ORDER BY orders.id DESC`;
 
     // eseguire la query
-    const [rows] = await db.execute(sql);
+    const [rows] = await db.execute(sql, params);
 
     // rispondere con gli ordini ottenuti
     res.status(200).json(rows);
+
+    // se non ci sono ordini, rispondere con un messaggio
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: "Nessun ordine trovato",
+      });
+    }
 
     // gestire gli errori del server
   } catch (error) {

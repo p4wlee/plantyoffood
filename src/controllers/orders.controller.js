@@ -1,4 +1,5 @@
 // connessione al database
+const e = require("express");
 const db = require("../db/connection");
 // creare un nuovo ordine (senza dettagli per ora)
 exports.createOrder = async (req, res) => {
@@ -30,6 +31,47 @@ exports.getOrders = async (req, res) => {
     // req.query sono i parametri di query opzionali (filtri opzionali)
     const { productId, startDate, endDate } = req.query;
 
+    // validiamo le date se fornite
+    if (startDate && isNaN(Date.parse(startDate))) {
+      return res.status(400).json({
+        error: "Formato startDate non valido. Usa AAAA-MM-GG",
+      });
+    }
+
+    // validiamo le date se fornite
+    if (endDate && isNaN(Date.parse(endDate))) {
+      return res.status(400).json({
+        error: "Formato endDate non valido. Usa AAAA-MM-GG",
+      });
+    }
+
+    // verificare che startDate non sia successiva a endDate
+    if (startDate && endDate && startDate > endDate) {
+      return res.status(400).json({
+        error: "startDate non può essere successiva a endDate",
+      });
+    }
+
+    // validiamo il productId se fornito e verifichiamo che il prodotto esista
+    if (productId) {
+      // validare che productId sia un numero positivo
+      if (isNaN(productId) || parseInt(productId) <= 0) {
+        return res.status(400).json({
+          error: `ID prodotto non valido. Deve essere un numero positivo`,
+        });
+      }
+
+      // verificare se il prodotto esiste
+      const [productRows] = await db.execute(`SELECT id FROM products WHERE id = ?`, [productId]);
+
+      // se il prodotto non esiste, rispondere con un errore
+      if (productRows.length === 0) {
+        return res.status(404).json({
+          error: `Prodotto con ID ${productId} non trovato`,
+        });
+      }
+    }
+
     /* query base per ottenere tutti gli ordini.
     usiamo DISTINCT perchè un ordine può contenere più prodotti. 
     usiamo LEFT JOIN perchè se non filtro per prodotto vogliamo comunque tutti gli ordini */
@@ -44,20 +86,20 @@ exports.getOrders = async (req, res) => {
     // aggiungere filtri opzionali alla query
     // se è stato fornito un productId, filtrare per quel prodotto
     if (productId) {
-      sql += ` AND order_products.product_id = ?`;
+      sql += ` AND order_products.product_id = ?`; // aggiungere la condizione per il productId
       params.push(productId); // aggiungere il productId ai parametri
     }
 
     // se sono state fornite date di inizio/fine, filtrare per intervallo di date
     // filtro per data di creazione dell'ordine
     if (startDate) {
-      sql += ` AND orders.created_at >= ?`;
+      sql += ` AND orders.created_at >= ?`; // aggiungere la condizione per la startDate
       params.push(startDate); // aggiungere la startDate ai parametri
     }
 
     // filtro per data di fine
     if (endDate) {
-      sql += ` AND orders.created_at <=?`;
+      sql += ` AND orders.created_at <= ?`; // aggiungere la condizione per la endDate
       params.push(endDate); // aggiungere la endDate ai parametri
     }
 
@@ -67,15 +109,15 @@ exports.getOrders = async (req, res) => {
     // eseguire la query
     const [rows] = await db.execute(sql, params);
 
-    // rispondere con gli ordini ottenuti
-    res.status(200).json(rows);
-
-    // se non ci sono ordini, rispondere con un messaggio
+    // se non sono stati trovati ordini, rispondere con un messaggio
     if (rows.length === 0) {
       return res.status(404).json({
-        message: "Nessun ordine trovato",
+        error: `Nessun ordine trovato con i criteri specificati`,
       });
     }
+
+    // rispondere con gli ordini ottenuti
+    res.status(200).json(rows);
 
     // gestire gli errori del server
   } catch (error) {

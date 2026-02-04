@@ -73,10 +73,10 @@ exports.getProductById = async (req, res) => {
       return res.status(404).json({
         error: `Prodotto con id ${id} non trovato.`,
       });
-
-      // restituisco il prodotto come risposta JSON
-      res.status(200).json(rows[0]);
     }
+
+    // restituisco il prodotto come risposta JSON
+    res.status(200).json(rows[0]);
 
     // gestione di eventuali errori del server
   } catch (error) {

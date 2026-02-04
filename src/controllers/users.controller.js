@@ -193,10 +193,9 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).json({
         error: `Utente con id ${id} non trovato.`,
       });
-
-      // restituisco una risposta di successo senza contenuto
-      res.status(204).send();
     }
+    // restituisco una risposta di successo senza contenuto
+    res.status(204).send();
 
     // gestione di eventuali errori del server
   } catch (error) {

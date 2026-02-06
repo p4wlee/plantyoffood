@@ -1,5 +1,4 @@
 // connessione al database
-const e = require("express");
 const db = require("../db/connection");
 // creare un nuovo ordine (senza dettagli per ora)
 exports.createOrder = async (req, res) => {

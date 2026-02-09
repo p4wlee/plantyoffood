@@ -30,35 +30,39 @@ exports.getOrders = async (req, res) => {
     // req.query sono i parametri di query opzionali (filtri opzionali)
     const { productId, startDate, endDate } = req.query;
 
-    // validiamo le date se fornite
+    /* la verifica seguente (ossia che i parametri di filtro siano validi) è stata spostata
+    in un moddleware dedicato (src/middleware/validators/orders.validators.js) per mantenere il controller più pulito.
+    In questo modo, se la validdazione fallisce, il middleware risponde con un errore e il controller non viene eseguito. 
+    Se la validazione ha successo, il middleware chiama next() e il controller viene eseguito normalmente.
+
+    il codice di validazione è il seguente (gestito ora dal middleware validateOrderFilter): 
     if (startDate && isNaN(Date.parse(startDate))) {
       return res.status(400).json({
         error: "Formato startDate non valido. Usa AAAA-MM-GG",
       });
     }
 
-    // validiamo le date se fornite
     if (endDate && isNaN(Date.parse(endDate))) {
       return res.status(400).json({
         error: "Formato endDate non valido. Usa AAAA-MM-GG",
       });
     }
 
-    // verificare che startDate non sia successiva a endDate
     if (startDate && endDate && startDate > endDate) {
       return res.status(400).json({
         error: "startDate non può essere successiva a endDate",
       });
     }
+      */
 
-    // validiamo il productId se fornito e verifichiamo che il prodotto esista
     if (productId) {
-      // validare che productId sia un numero positivo
+      /* la verifica seguente (ossia che il productId sia valido) è stata spostata anch'essa nel middleware validateOrderFilter
       if (isNaN(productId) || parseInt(productId) <= 0) {
         return res.status(400).json({
           error: `ID prodotto non valido. Deve essere un numero positivo`,
         });
       }
+        */
 
       // verificare se il prodotto esiste
       const [productRows] = await db.execute(`SELECT id FROM products WHERE id = ?`, [productId]);
@@ -266,12 +270,17 @@ exports.addUserToOrder = async (req, res) => {
     // estrarre l'ID dell'ordine e l'ID del prodotto dai parametri della richiesta
     const { orderId, userId } = req.params; // order ID
 
-    // convalidare l'input
+    /* la verifica seguente (ossia che l'userId sia valido) è stata spostata in un middleware dedicato (src/middleware/validators/orders.validators.js) per mantenere il controller più pulito
+    In questo modo, se la validdazione fallisce, il middleware risponde con un errore e il controller non viene eseguito. 
+    Se la validazione ha successo, il middleware chiama next() e il controller viene eseguito normalmente.
+
+      il codice di validazione è il seguente (gestito ora dal middleware validateUserIdParam):
     if (!userId) {
       return res.status(400).json({
         error: `il campo USER_ID è obbligatorio.`,
       });
     }
+      */
 
     // verificare se l'ordine esiste
     const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [orderId]);
@@ -328,12 +337,17 @@ exports.removeUserFromOrder = async (req, res) => {
     // estrarre l'ID dell'ordine e l'ID del prodotto dai parametri della richiesta
     const { orderId, userId } = req.params; // order ID
 
-    // convalidare l'input
+    /* la verifica seguente (ossia che l'userId sia valido) è stata spostata in un middleware dedicato (src/middleware/validators/orders.validators.js) per mantenere il controller più pulito
+    In questo modo, se la validdazione fallisce, il middleware risponde con un errore e il controller non viene eseguito. 
+    Se la validazione ha successo, il middleware chiama next() e il controller viene eseguito normalmente.
+
+      il codice di validazione è il seguente (gestito ora dal middleware validateUserIdParam):
     if (!userId) {
       return res.status(400).json({
         error: `il campo USER_ID è obbligatorio.`,
       });
     }
+      */
 
     // verificare se l'ordine esiste
     const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [orderId]);
@@ -387,12 +401,17 @@ exports.addProductToOrder = async (req, res) => {
     // estrarre l'ID dell'ordine e l'ID del prodotto dai parametri della richiesta
     const { orderId, productId } = req.params;
 
-    // convalidare l'input
+    /* la verifica seguente (ossia che il productId sia valido) è stata spostata in un middleware dedicato (src/middleware/validators/orders.validators.js) per mantenere il controller più pulito
+    In questo modo, se la validdazione fallisce, il middleware risponde con un errore e il controller non viene eseguito. 
+    Se la validazione ha successo, il middleware chiama next() e il controller viene eseguito normalmente.
+
+      il codice di validazione è il seguente (gestito ora dal middleware validateProductIdParam):
     if (!productId) {
       return res.status(400).json({
         error: `il campo PRODUCT_ID è obbligatorio.`,
       });
     }
+      */
 
     // verificare se l'ordine esiste
     const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [orderId]);
@@ -449,12 +468,17 @@ exports.removeProductFromOrder = async (req, res) => {
     // estrarre l'ID dell'ordine e l'ID del prodotto dai parametri della richiesta
     const { orderId, productId } = req.params;
 
-    // convalidare l'input
+    /* la verifica seguente (ossia che il productId sia valido) è stata spostata in un middleware dedicato (src/middleware/validators/orders.validators.js) per mantenere il controller più pulito
+    In questo modo, se la validdazione fallisce, il middleware risponde con un errore e il controller non viene eseguito. 
+    Se la validazione ha successo, il middleware chiama next() e il controller viene eseguito normalmente.
+
+      il codice di validazione è il seguente (gestito ora dal middleware validateProductIdParam):
     if (!productId) {
       return res.status(400).json({
         error: `il campo PRODUCT_ID è obbligatorio.`,
       });
     }
+      */
 
     // verificare se l'ordine esiste
     const [orderRows] = await db.execute(`SELECT * FROM orders WHERE id = ?`, [orderId]);

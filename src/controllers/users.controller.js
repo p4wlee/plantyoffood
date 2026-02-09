@@ -6,7 +6,13 @@ exports.createUser = async (req, res) => {
   // estraggo i campi (nome, cognome, email) necessari dal corpo della richiesta
   try {
     const { nome, cognome, email } = req.body;
-    // verifico che tutti i campi obbligatori siano stati forniti
+    /* la verifica seguente (ossia se tutti i campi obbligatori sono stati forniti) è stata spostata
+    in un middleware dedicato (src/middleware/validators/users.validators.js) per mantenere il controller più pulito.
+    In questo modo, se la validazione fallisce, il middleware restituirà una risposta di errore 
+    e il controller non verrà eseguito. 
+    Se invece la validazione ha successo, il controller procederà con la creazione dell'utente.
+
+    il codice di validazione è il seguente (gestito ora dal middleware validateUserCreate):
     if (!nome) {
       return res.status(400).json({
         error: "Il campo NOME è obbligatorio.",
@@ -20,6 +26,7 @@ exports.createUser = async (req, res) => {
         error: "Il campo EMAIL è obbligatorio.",
       });
     }
+       */
 
     // preparo la query SQL per inserire il nuovo utente nel database
     const sql = `INSERT INTO users (nome, cognome, email) VALUES (?, ?, ?)`;
@@ -111,12 +118,19 @@ exports.updateUser = async (req, res) => {
     const { id } = req.params;
     const { nome, cognome, email } = req.body;
 
-    // verifico che almeno un campo sia stato fornito
+    /* la verifica seguente (ossia se almeno un campo è stato fornito per l'aggiornamento) è stata spostata
+    in un middleware dedicato (src/middleware/validators/users.validators.js) per mantenere il controller più pulito.
+    In questo modo, se la validazione fallisce, il middleware restituirà una risposta di errore
+    e il controller non verrà eseguito.
+    Se invece la validazione ha successo, il controller procederà con l'aggiornamento dell'utente.
+
+    il codice di validazione è il seguente (gestito ora dal middleware validateUserUpdate):
     if (!nome && !cognome && !email) {
       return res.status(400).json({
         error: `Almeno un campo (NOME, COGNOME, EMAIL) deve essere fornito per l'aggiornamento.`,
       });
     }
+      */
 
     // preparo la query SQL per aggiornare l'utente nel database
     // field serves per costruire dinamicamente la query in base ai campi forniti

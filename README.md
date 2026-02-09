@@ -2,18 +2,6 @@
 
 API RESTful per la gestione dei gruppi di acquisto di prodotti plant-based.
 
-## 📋 Indice
-
-- [Descrizione](#descrizione)
-- [Tecnologie Utilizzate](#tecnologie-utilizzate)
-- [Installazione](#installazione)
-- [Configurazione](#configurazione)
-- [Struttura del Progetto](#struttura-del-progetto)
-- [API Endpoints](#api-endpoints)
-- [Esempi di Utilizzo](#esempi-di-utilizzo)
-
----
-
 ## 📖 Descrizione
 
 Planty of Food è un'API per gestire gruppi di acquisto di prodotti plant-based. L'applicazione permette di:

@@ -6,14 +6,20 @@ exports.createProduct = async (req, res) => {
   // estrai il nome del prodotto dal corpo della richiesta
   try {
     const { nome } = req.body;
-    // verifico che il nome sia stato fornito
+
+    /* la verifica seguente (ossia se il nome è stato fornito) è stata spostata 
+    in un middleware dedicato (src/middleware/validators/products.validators.js) per mantenere il controller più pulito.
+    In questo modo, se la validazione fallisce, il middleware restituirà una risposta di errore 
+    e il controller non verrà eseguito. 
+    Se invece la validazione ha successo, il controller procederà con la creazione del prodotto.
+
+    il codice di validazione è il seguente (gestito ora dal middleware validateProductCreate):
     if (!nome) {
-      // se non viene fornito il nome, restituisco un errore 400
       return res.status(400).json({
         error: "Il campo NOME è obbligatorio.",
       });
     }
-
+      */
     // preparo la query SQL per inserire il nuovo prodotto nel database
     const sql = `INSERT INTO products (nome) VALUES (?)`;
     // eseguo la query
@@ -95,12 +101,19 @@ exports.updateProduct = async (req, res) => {
     const { id } = req.params;
     const { nome } = req.body;
 
-    // verifico che il nome sia stato fornito
+    /* la verifica seguente (ossia se il nome è stato fornito) è stata spostata
+    in un middleware dedicato (src/middleware/validators/products.validators.js) per mantenere il controller più pulito.
+    In questo modo, se la validazione fallisce, il middleware restituirà una risposta di errore 
+    e il controller non verrà eseguito. 
+    Se invece la validazione ha successo, il controller procederà con l'aggiornamento del prodotto.
+
+    il codice di validazione è il seguente (gestito ora dal middleware validateProductUpdate):
     if (!nome) {
       return res.status(400).json({
         error: `Il campo NOME è obbligatorio.`,
       });
     }
+      */
 
     // preparo la query SQL per aggiornare il prodotto nel database
     const sql = `UPDATE products SET nome = ? WHERE id = ?`;

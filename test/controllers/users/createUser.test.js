@@ -13,8 +13,8 @@ const usersController = require("../../../src/controllers/users.controller");
 const db = require("../../../src/db/connection");
 
 describe("createUser Controller", () => {
-  // Questa funzione viene eseguita DOPO ogni test
-  // Serve a pulire gli stub per non influenzare i test successivi
+  // questa funzione viene eseguita DOPO ogni test
+  // serve a pulire gli stub per non influenzare i test successivi
   afterEach(() => {
     sinon.restore(); // ripristina tutti gli stub
   });

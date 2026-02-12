@@ -34,6 +34,9 @@ describe("updateUser Controller", () => {
     // creo uno stub di db.execute
     const executeStub = sinon.stub(db, "execute");
 
+    /* utilizzo executeStub.onFistCall() e executeStub.onSecondCall() perchè
+    il controller chiama il DB più volte, dunque bisogna usare stub multipli sulla stessa funzione */
+
     // prima chiamata, UPDATE (affectedRows = 1 significato successo)
     executeStub.onFirstCall().resolves([{ affectedRows: 1 }, []]);
 

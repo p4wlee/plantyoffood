@@ -11,7 +11,7 @@ const usersController = require("../../../src/controllers/users.controller");
 const db = require("../../../src/db/connection");
 
 describe("deleteUser Controller", () => {
-  afeterEach(() => {
+  afterEach(() => {
     sinon.restore();
   });
 
@@ -74,11 +74,11 @@ describe("deleteUser Controller", () => {
     per questo motivo verifichiamo che venga chiamato json() e non send()
     */
     expect(res.status.calledWith(404)).to.be.true;
-    expect(res.send.calledOnce).to.be.true;
-    expect(res.json.notCalled).to.be.true;
+    expect(res.json.calledOnce).to.be.true;
+    expect(res.send.notCalled).to.be.true;
 
     // verifico che venga restituito un oggetto con proprietà error
-    expect(res.json.firstCall.args[0]).to.have.propertu("error");
+    expect(res.json.firstCall.args[0]).to.have.property("error");
   });
 
   //test errore DB

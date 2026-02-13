@@ -11,7 +11,6 @@ const productsController = require("../../../src/controllers/products.controller
 
 // importo il database per poterlo stubbare (ossia fingere l' avvenimento di una funzione)
 const db = require("../../../src/db/connection");
-const { afterEach } = require("mocha");
 
 describe("createProduct Controller", async () => {
   // questa funzione viene eseguita DOPO ogni test

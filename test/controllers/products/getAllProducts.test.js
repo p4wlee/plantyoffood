@@ -12,7 +12,7 @@ const productsController = require("../../../src/controllers/products.controller
 // importo il database per poterlo stubbare (ossia fingere l' avvenimento di una funzione)
 const db = require("../../../src/db/connection");
 
-describe("getAllProcuct Controller", () => {
+describe("getAllProduct Controller", () => {
   // questa funzione viene eseguita DOPO ogni test
   // serve a pulire gli stub per non influenzare i test successivi
   afterEach(() => {

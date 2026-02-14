@@ -33,7 +33,7 @@ describe("createOrder Controller", () => {
     // simulo il database
     sinon.stub(db, "execute").resolves([{ insertId: 10 }, []]);
 
-    // eseguiamo la funzione
+    // eseguo la funzione
     await ordersController.createOrder(req, res);
 
     // verifico che status sia 201

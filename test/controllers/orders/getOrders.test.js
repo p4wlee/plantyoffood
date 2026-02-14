@@ -56,8 +56,8 @@ describe("getOrders Controller", () => {
     expect(responseData).to.deep.equal(fakeOrders);
   });
 
-  // test di successo con filtro id
-  it("dovrebbe applicare il filtro id e chiamare il db con parametri corretti", async () => {
+  // test di successo con filtro productId
+  it("dovrebbe applicare il filtro productId e chiamare il db con parametri corretti", async () => {
     // simulo req con filtro id
     const req = {
       query: {

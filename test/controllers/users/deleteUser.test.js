@@ -70,7 +70,7 @@ describe("deleteUser Controller", () => {
     in questo caso lo status 404 (not found) indica che la richiesta è valida
     ma la risorsa non esiste nel db.
     a differenza del 204, qui è corretto restituire un body json,
-    perhcè il cliend deve ricevere informazioni sull' errore.
+    perhcè il client deve ricevere informazioni sull' errore.
     per questo motivo verifichiamo che venga chiamato json() e non send()
     */
     expect(res.status.calledWith(404)).to.be.true;

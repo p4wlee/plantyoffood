@@ -29,9 +29,10 @@ describe("removeUserToOrder Controller", () => {
       },
     };
 
-    // simulo la response
-    // in questo caso il controller usa status().send()
-    // NON usa json()
+    /* simulo la response
+    in questo caso il controller usa status().send()
+    NON usa json() perchè non c'è body
+    */
     const res = {
       status: sinon.stub().returnsThis(),
       send: sinon.stub(),
@@ -79,7 +80,7 @@ describe("removeUserToOrder Controller", () => {
 
     const executeStub = sinon.stub(db, "execute");
 
-    // 1️⃣ ordine NON trovato
+    // ordine NON trovato
     executeStub.onFirstCall().resolves([[]]);
 
     await ordersController.removeUserFromOrder(req, res);

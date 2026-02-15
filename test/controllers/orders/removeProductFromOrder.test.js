@@ -29,9 +29,10 @@ describe("removeProductToOrder Controller", () => {
       },
     };
 
-    // simulo la response
-    // in questo caso il controller usa status().send()
-    // NON usa json()
+    /* simulo la response
+    in questo caso il controller usa status().send()
+    NON usa json() perchè non c'è body
+    */
     const res = {
       status: sinon.stub().returnsThis(),
       send: sinon.stub(),

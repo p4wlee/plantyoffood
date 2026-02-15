@@ -6,7 +6,7 @@ per sostituire pezzi del codice durante i test, in modo da non dover utilizzare 
 */
 const sinon = require("sinon");
 
-//importo il controller users.controller
+//importo il controller orders.controller
 const ordersController = require("../../../src/controllers/orders.controller");
 
 // importo il database per poterlo stubbare (ossia fingere l' avvenimento di una funzione)

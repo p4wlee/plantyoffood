@@ -4,7 +4,7 @@ const { expect } = require("chai");
 //importo sinon per creare stub (cose "finte") e simulazioni
 const sinon = require("sinon");
 
-// importo il controller da testare
+// importo il controller da testare users.controller
 const usersController = require("../../../src/controllers/users.controller");
 
 // importo il database per poterlo stubbare (ossia fingere l' avvenimento di una funzione)

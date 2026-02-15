@@ -133,6 +133,39 @@ describe("getOrders Controller", () => {
     expect(responseData).to.have.property("error");
   });
 
+  // test product non trovato
+  it("dovrebbe restituire status 404 se il prodotto non esiste", async () => {
+    const req = {
+      query: { productId: 99 },
+    };
+
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    // creo lo stub con comportamento specifico per le diverse chiamate
+    const executeStub = sinon.stub(db, "execute");
+
+    // prima chiamata (verifica prodotto): restituisce array vuoto (prodotto non trovato)
+    executeStub.onFirstCall().resolves([[]]);
+
+    // non serve definire la seconda chiamata perché non dovrebbe mai essere eseguita
+
+    await ordersController.getOrders(req, res);
+
+    // Verifiche sulla risposta
+    expect(res.status.calledWith(404)).to.be.true;
+    expect(res.json.calledOnce).to.be.true;
+
+    const responseData = res.json.firstCall.args[0];
+    expect(responseData).to.have.property("error");
+
+    // verifica IMPORTANTE: la seconda query NON deve essere chiamata
+    expect(executeStub.calledOnce).to.be.true; // solo la prima chiamata deve eseguirsi
+    expect(executeStub.calledTwice).to.be.false; // la seconda non deve avvenire
+  });
+
   // test errore db
   it("restituisce 500 se il database genera un errore", async () => {
     const req = {

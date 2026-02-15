@@ -94,40 +94,6 @@ describe("addUserToOrder Controller", () => {
   });
 
   // test utente inesistente
-  it("dovrebbe restituire 400 se l'associazione esiste già", async () => {
-    const req = {
-      params: {
-        orderId: 10,
-        userId: 3,
-      },
-    };
-
-    const res = {
-      status: sinon.stub().returnsThis(),
-      json: sinon.stub(),
-    };
-
-    const executeStub = sinon.stub(db, "execute");
-
-    // ordine esiste
-    executeStub.onFirstCall().resolves([[{ id: 10 }]]);
-
-    // utente esiste
-    executeStub.onSecondCall().resolves([[{ id: 3 }]]);
-
-    // associazione già presente
-    executeStub.onThirdCall().resolves([[{ order_id: 10, user_id: 3 }]]);
-
-    await ordersController.addUserToOrder(req, res);
-
-    // verifico risposta 400
-    expect(res.status.calledWith(400)).to.be.true;
-
-    // verifico che si fermi alla terza query
-    expect(executeStub.callCount).to.equal(3);
-  });
-
-  // test utente inesistente
   it("dovrebbe restituire 404 se l'utente non esiste", async () => {
     const req = {
       params: {
@@ -158,7 +124,7 @@ describe("addUserToOrder Controller", () => {
     expect(executeStub.callCount).to.equal(2);
   });
 
-  // test associazione ordine - utente già esistente
+  // test associazione già esistente
   it("dovrebbe restituire 400 se l'associazione esiste già", async () => {
     const req = {
       params: {

@@ -213,7 +213,7 @@ describe("Users Validators Middleware", () => {
       // creo stub per next()
       const next = sinon.stub();
 
-      // eseguo il middlewarw
+      // eseguo il middleware
       usersValidators.validateUserUpdate(req, res, next);
 
       // verifico che sia chiamato next()

@@ -6,21 +6,30 @@ API RESTful per la gestione dei gruppi di acquisto di prodotti plant-based.
 
 Planty of Food è un'API per gestire gruppi di acquisto di prodotti plant-based. L'applicazione permette di:
 
-- ✅ Gestire prodotti (CRUD completo)
-- ✅ Gestire utenti/anagrafiche (CRUD completo)
-- ✅ Gestire ordini di vendita (CRUD completo)
-- ✅ Associare prodotti e utenti agli ordini
-- ✅ Filtrare ordini per data e prodotto
+- Gestire prodotti (CRUD completo)
+- Gestire utenti/anagrafiche (CRUD completo)
+- Gestire ordini di vendita (CRUD completo)
+- Associare prodotti e utenti agli ordini
+- Filtrare ordini per data e prodotto
+- Unit Testing completo con Mocha, Chai e Sinon
 
 ---
 
 ## 🛠️ Tecnologie Utilizzate
 
+### Produzione
+
 - **Node.js** - Runtime JavaScript
 - **Express** (v5.2.1) - Framework web
 - **MySQL2** (v3.16.1) - Driver MySQL con supporto Promise
 - **dotenv** (v17.2.3) - Gestione variabili d'ambiente
+
+### Sviluppo
+
 - **Nodemon** (v3.1.11) - Auto-restart durante lo sviluppo
+- **Mocha** (v11.7.5) - Framework di testing
+- **Chai** (v6.2.2) - Assertion library
+- **Sinon** (v21.0.1) - Mocking e stubbing per test
 
 ---
 
@@ -59,10 +68,10 @@ Planty of Food è un'API per gestire gruppi di acquisto di prodotti plant-based.
 
 4. **Configura le variabili d'ambiente**
 
-   Copia il file `.env.example` e rinominalo in `.env`:
+   Copia il file `env.example` e rinominalo in `.env`:
 
    ```bash
-   cp .env.example .env
+   cp env.example .env
    ```
 
    Modifica il file `.env` con le tue credenziali:
@@ -72,7 +81,7 @@ Planty of Food è un'API per gestire gruppi di acquisto di prodotti plant-based.
    DB_USER=root
    DB_PASSWORD=tua_password
    DB_NAME=pof_db
-   PORT=3000
+   PORT=3006
    ```
 
 5. **Avvia il server**
@@ -83,7 +92,7 @@ Planty of Food è un'API per gestire gruppi di acquisto di prodotti plant-based.
    npm run dev
    ```
 
-   Il server sarà disponibile su `http://localhost:3000`
+   Il server sarà disponibile su `http://localhost:3006`
 
 ---
 
@@ -124,8 +133,14 @@ plantyoffood/
 │   │   ├── users.routes.js
 │   │   └── orders.routes.js
 │   └── app.js                # Entry point
+├── test/                     # Unit tests
+│   ├── controllers/
+│   │   ├── users/           # 5 file di test
+│   │   ├── products/        # 5 file di test
+│   │   └── orders/          # 10 file di test
+│   └── middleware/          # 3 file di test
 ├── migrations.sql            # Schema database
-├── .env.example              # Template variabili d'ambiente
+├── env.example              # Template variabili d'ambiente
 ├── .gitignore
 ├── package.json
 └── README.md
@@ -186,9 +201,9 @@ Query parameters per `GET /orders`:
 **Esempi**:
 
 ```
-GET /orders?startDate=2024-01-01&endDate=2024-12-31
+GET /orders?startDate=2026-02-01&endDate=2026-02-15
 GET /orders?productId=5
-GET /orders?startDate=2024-01-01&productId=3
+GET /orders?startDate=2026-02-05&productId=3
 ```
 
 ---
@@ -204,7 +219,7 @@ POST /products
 Content-Type: application/json
 
 {
-  "nome": "Tofu Bio"
+  "nome": "Tofu"
 }
 ```
 
@@ -213,8 +228,8 @@ Content-Type: application/json
 ```json
 {
   "id": 1,
-  "nome": "Tofu Bio",
-  "created_at": "2024-01-28T10:30:00.000Z"
+  "nome": "Tofu",
+  "created_at": "2026-02-10T10:30:00.000Z"
 }
 ```
 
@@ -229,7 +244,7 @@ Content-Type: application/json
 {
   "nome": "Mario",
   "cognome": "Rossi",
-  "email": "mario.rossi@email.com"
+  "email": "mariorossi@email.com"
 }
 ```
 
@@ -240,8 +255,8 @@ Content-Type: application/json
   "id": 1,
   "nome": "Mario",
   "cognome": "Rossi",
-  "email": "mario.rossi@email.com",
-  "created_at": "2024-01-28T10:35:00.000Z"
+  "email": "mariorossi@email.com",
+  "created_at": "2026-02-08T10:35:00.000Z"
 }
 ```
 
@@ -258,7 +273,7 @@ POST /orders
 ```json
 {
   "id": 1,
-  "created_at": "2024-01-28T10:40:00.000Z"
+  "created_at": "2026-02-05T10:40:00.000Z"
 }
 ```
 
@@ -303,7 +318,7 @@ POST /orders/1/users/1
 **Request:**
 
 ```http
-GET /orders?startDate=2024-01-01&endDate=2024-12-31&productId=1
+GET /orders?startDate=2026-02-01&endDate=2026-02-15&productId=1
 ```
 
 **Response:**
@@ -312,11 +327,11 @@ GET /orders?startDate=2024-01-01&endDate=2024-12-31&productId=1
 [
   {
     "id": 1,
-    "created_at": "2024-01-28T10:40:00.000Z"
+    "created_at": "2026-02-03T10:40:00.000Z"
   },
   {
     "id": 2,
-    "created_at": "2024-02-15T14:20:00.000Z"
+    "created_at": "2026-02-12T14:20:00.000Z"
   }
 ]
 ```
@@ -342,7 +357,7 @@ Content-Type: application/json
   "nome": "Mario",
   "cognome": "Rossi",
   "email": "nuovo.email@example.com",
-  "created_at": "2024-01-28T10:35:00.000Z"
+  "created_at": "2026-02-08T10:35:00.000Z"
 }
 ```
 
@@ -350,18 +365,162 @@ Content-Type: application/json
 
 ## 🔒 Sicurezza
 
-- ✅ **Prepared Statements**: Tutte le query utilizzano prepared statements per prevenire SQL Injection
-- ✅ **Validazione Input**: Middleware di validazione su tutti gli endpoint
-- ✅ **Gestione Errori**: Try-catch completi con logging
-- ✅ **Integrità Referenziale**: Foreign keys con CASCADE per mantenere consistenza
+- **Prepared Statements**: Tutte le query utilizzano prepared statements per prevenire SQL Injection
+- **Validazione Input**: Middleware di validazione su tutti gli endpoint
+- **Gestione Errori**: Try-catch completi con logging
+- **Integrità Referenziale**: Foreign keys con CASCADE per mantenere consistenza
 
 ---
 
 ## 🧪 Testing
 
-Puoi testare le API usando:
+Il progetto include una suite completa di **unit test** implementati con **Mocha**, **Chai** e **Sinon**.
 
-- **Postman**: Importa la collection (se disponibile)
+### 📊 Copertura Test
+
+- **23 file di test**
+- **92 test cases** totali
+- **31 describe blocks**
+
+**Test implementati per**:
+
+- Tutti i controller (users, products, orders)
+- Tutti i middleware di validazione
+- Scenari di successo
+- Scenari di errore
+- Edge cases
+
+### 🚀 Eseguire i Test
+
+Per eseguire tutti i test:
+
+```bash
+npm test
+```
+
+**Output atteso:**
+
+```
+  createUser Controller
+    ✓ dovrebbe creare un nuovo utente e restituire 201
+    ✓ dovrebbe restituire 409 se email duplicata
+    ✓ dovrebbe restituire 500 per errore generico
+
+  getUsers Controller
+    ✓ dovrebbe restituire tutti gli utenti con status 200
+    ✓ dovrebbe restituire array vuoto se non ci sono utenti
+    ✓ dovrebbe restituire 500 in caso di errore database
+
+  ... (altri test)
+
+  92 passing (450ms)
+```
+
+### 📁 Struttura Test
+
+```
+test/
+├── controllers/
+│   ├── users/
+│   │   ├── createUser.test.js       (3 test)
+│   │   ├── getUsers.test.js         (3 test)
+│   │   ├── getUserById.test.js      (3 test)
+│   │   ├── updateUser.test.js       (5 test)
+│   │   └── deleteUser.test.js       (3 test)
+│   │
+│   ├── products/
+│   │   ├── createProduct.test.js    (2 test)
+│   │   ├── getAllProducts.test.js   (3 test)
+│   │   ├── getProductById.test.js   (3 test)
+│   │   ├── updateProduct.test.js    (3 test)
+│   │   └── deleteProduct.test.js    (3 test)
+│   │
+│   └── orders/
+│       ├── createOrder.test.js      (2 test)
+│       ├── getOrders.test.js        (5 test - include test filtri)
+│       ├── getOrderById.test.js     (3 test)
+│       ├── deleteOrder.test.js      (3 test)
+│       ├── addUserToOrder.test.js   (5 test)
+│       ├── removeUserFromOrder.test.js (4 test)
+│       ├── addProductToOrder.test.js (5 test)
+│       ├── removeProductFromOrder.test.js (4 test)
+│       ├── getUsersOfOrder.test.js  (3 test)
+│       └── getProductsOfOrder.test.js (3 test)
+│
+└── middleware/
+    ├── users.validators.test.js     (8 test)
+    ├── products.validators.test.js  (4 test)
+    └── orders.validators.test.js    (12 test)
+```
+
+### 🎯 Esempio di Test
+
+**Test per createUser**:
+
+```javascript
+describe("createUser Controller", () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it("dovrebbe creare un nuovo utente e restituire 201", async () => {
+    const req = {
+      body: { nome: "Mario", cognome: "Rossi", email: "mario@email.com" },
+    };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    sinon.stub(db, "execute").resolves([{ insertId: 1 }, []]);
+
+    await usersController.createUser(req, res);
+
+    expect(res.status.calledWith(201)).to.be.true;
+    expect(res.json.calledOnce).to.be.true;
+  });
+});
+```
+
+### 🧩 Cosa Testano i Test
+
+**Scenari di successo**:
+
+- Creazione riuscita (status 201)
+- Lettura lista completa (status 200)
+- Lettura singolo elemento (status 200)
+- Aggiornamento riuscito (status 200)
+- Eliminazione riuscita (status 204)
+
+**Scenari di errore**:
+
+- Email duplicata (status 409)
+- Risorsa non trovata (status 404)
+- Errore database (status 500)
+- Validazione fallita (status 400)
+
+**Edge cases**:
+
+- Liste vuote
+- Aggiornamenti parziali
+- Filtri combinati
+- Associazioni duplicate
+- Chiamate multiple al database
+
+### 🛠️ Tecnologie Testing
+
+**Mocha** - Test runner che organizza ed esegue i test  
+**Chai** - Libreria di asserzioni per verifiche leggibili (`expect(x).to.equal(y)`)  
+**Sinon** - Mocking e stubbing per simulare il comportamento del database
+
+### 📝 Best Practices Implementate
+
+- Pattern AAA (Arrange-Act-Assert) in ogni test
+- Cleanup con `afterEach(() => sinon.restore())`
+- Un file di test per ogni funzione
+- Stub del database per isolare i test
+- Verifica chiamate multiple al DB con `onCall`
+- Commenti chiari in italiano
 
 ---
 
